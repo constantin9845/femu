@@ -41,11 +41,21 @@ int backend_rw(SsdDramBackend *b, QEMUSGList *qsg, uint64_t *lbal, bool is_write
         dir = DMA_DIRECTION_TO_DEVICE;
     }
 
-    femu_log("Starting read process\n");
+    if(is_write) {
+        femu_log("Starting write process\n");
+    } else {
+        femu_log("Starting read process\n");
+    }
 
     while (sg_cur_index < qsg->nsg) {
-	femu_log("Current address = %lu\n", qsg->sg[sg_cur_index].base+sg_cur_byte);
-	femu_log("Reading from address for %lu bytes\n", qsg->sg[sg_cur_index].len-sg_cur_byte);
+
+        if(is_write) {
+            femu_log("Current address = %lu\n", qsg->sg[sg_cur_index].base+sg_cur_byte);
+            femu_log("Writing to address for %lu bytes\n", qsg->sg[sg_cur_index].len-sg_cur_byte);
+        } else {    
+            femu_log("Current address = %lu\n", qsg->sg[sg_cur_index].base+sg_cur_byte);
+            femu_log("Reading from address for %lu bytes\n", qsg->sg[sg_cur_index].len-sg_cur_byte);
+        }
 
         cur_addr = qsg->sg[sg_cur_index].base + sg_cur_byte;
         cur_len = qsg->sg[sg_cur_index].len - sg_cur_byte;

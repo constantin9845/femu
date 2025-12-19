@@ -724,7 +724,11 @@ static uint16_t oc20_rw(FemuCtrl *n, NvmeCmd *cmd, NvmeRequest *req, bool vector
     req->slba = (uint64_t)g_malloc0(sizeof(uint64_t) * nlb);
     req->is_write = oc20_rw_is_write(req) ? true : false;
 
-    femu_log("oc20.c | oc20_rw() | Checking if read or write command.\n");
+    if(req->is_write) {
+        femu_log("oc20.c | oc20_rw() | Processing write command.\n");
+    } else {
+        femu_log("oc20.c | oc20_rw() | Processing read command.\n");
+    }
 
     if (vector) {
         if (nlb > 1) {
@@ -950,12 +954,13 @@ static uint16_t oc20_io_cmd(FemuCtrl *n, NvmeNamespace *ns, NvmeCmd *cmd,
 {
     switch (cmd->opcode) {
     case NVME_CMD_READ:
+        femu_log("Received READ command in oc20.c | opcode = %x\n", cmd->opcode);
     case NVME_CMD_WRITE:
         /*
          * SPDK quirk: Somehow SPDK relies on NVME_CMD_{READ,WRITE} for its
          * libftl on OCSSD2.0, so let's enable it here
          */
-	    femu_log("Received READ command in oc20.c | opcode = %x\n", cmd->opcode);
+	    femu_log("Received WRITE command in oc20.c | opcode = %x\n", cmd->opcode);
         return oc20_rw(n, cmd, req, false);
     case OC20_CMD_VECT_READ:
     case OC20_CMD_VECT_WRITE:
