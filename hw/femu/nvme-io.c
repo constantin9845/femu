@@ -538,9 +538,11 @@ static uint16_t nvme_io_cmd(FemuCtrl *n, NvmeCmd *cmd, NvmeRequest *req)
         }
         return NVME_INVALID_OPCODE | NVME_DNR;
     default:
+	femu_log("Parsed read command in nvme-io.c\n");
         if (n->ext_ops.io_cmd) {
             return n->ext_ops.io_cmd(n, ns, cmd, req);
         }
+
 
         femu_err("%s, NVME_INVALID_OPCODE\n", __func__);
         return NVME_INVALID_OPCODE | NVME_DNR;
