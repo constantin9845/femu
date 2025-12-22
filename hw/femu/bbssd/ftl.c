@@ -236,7 +236,7 @@ static void check_params(struct ssdparams *spp)
 
 static void ssd_init_params(struct ssdparams *spp, FemuCtrl *n)
 {
-    spp->secsz = n->bb_params.secsz; // 512
+    spp->secsz = n->bb_params.secsz; // 512 bytes
     spp->secs_per_pg = n->bb_params.secs_per_pg; // 8
     spp->pgs_per_blk = n->bb_params.pgs_per_blk; //256
     spp->blks_per_pl = n->bb_params.blks_per_pl; /* 256 16GB */
@@ -996,6 +996,7 @@ static void *ftl_thread(void *arg)
 
             /* clean one line if needed (in the background) */
             if (should_gc(ssd)) {
+                femu_log("FTL: Triggering background GC\n");
                 do_gc(ssd, false);
             }
         }

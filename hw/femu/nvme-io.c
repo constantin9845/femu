@@ -251,11 +251,11 @@ void *nvme_poller(void *arg)
 uint16_t nvme_rw(FemuCtrl *n, NvmeNamespace *ns, NvmeCmd *cmd, NvmeRequest *req)
 {
     NvmeRwCmd *rw = (NvmeRwCmd *)cmd;
-    uint16_t ctrl = le16_to_cpu(rw->control);
-    uint32_t nlb  = le16_to_cpu(rw->nlb) + 1;
-    uint64_t slba = le64_to_cpu(rw->slba);
-    uint64_t prp1 = le64_to_cpu(rw->prp1);
-    uint64_t prp2 = le64_to_cpu(rw->prp2);
+    uint16_t ctrl = le16_to_cpu(rw->control); 
+    uint32_t nlb  = le16_to_cpu(rw->nlb) + 1; // Number of logical blocks
+    uint64_t slba = le64_to_cpu(rw->slba); // Starting LBA
+    uint64_t prp1 = le64_to_cpu(rw->prp1); // DRAM address of where data is to be read/written 
+    uint64_t prp2 = le64_to_cpu(rw->prp2); // Extra DRAM address if data size exceeds what can be described by prp1 / a list is stored here if data spans more than 2 pages
     const uint8_t lba_index = NVME_ID_NS_FLBAS_INDEX(ns->id_ns.flbas);
     const uint16_t ms = le16_to_cpu(ns->id_ns.lbaf[lba_index].ms);
     const uint8_t data_shift = ns->id_ns.lbaf[lba_index].lbads;
